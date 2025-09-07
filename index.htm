@@ -1,94 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Get Your Personal Sheet</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 60px;
-      background: #0f172a;
-      color: #e0e7ff;
-    }
-    input[type="email"] {
-      padding: 10px;
-      font-size: 16px;
-      width: 300px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 12px 25px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #3b82f6, #9333ea);
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #2563eb, #7e22ce);
-    }
-    #status {
-      margin-top: 20px;
-      font-size: 16px;
-    }
-    a {
-      color: #60a5fa;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Get Your Personal Sheet</title>
+<style>
+body { font-family: Arial; text-align:center; margin-top:60px; background:#0f172a; color:#e0e7ff; }
+input[type="email"] { padding:10px; font-size:16px; width:300px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc; }
+button { padding:12px 25px; font-size:18px; border:none; border-radius:10px; background:linear-gradient(90deg,#3b82f6,#9333ea); color:white; cursor:pointer; transition:.3s; }
+button:hover { background:linear-gradient(90deg,#2563eb,#7e22ce); }
+#status { margin-top:20px; font-size:16px; }
+a { color:#60a5fa; text-decoration:none; font-weight:bold; }
+a:hover { text-decoration:underline; }
+</style>
 </head>
 <body>
-  <h1>Get Your Personal Sheet</h1>
-  <p>Enter your Google email to get your own sheet.</p>
-  <input type="email" id="email" placeholder="Enter your Google email">
-  <br>
-  <button id="cloneBtn">Get My Sheet</button>
-  <p id="status"></p>
+<h1>Get Your Personal Sheet</h1>
+<p>Enter your Google email to get your own sheet.</p>
+<input type="email" id="email" placeholder="Enter your Google email"><br>
+<button id="cloneBtn">Get My Sheet</button>
+<p id="status"></p>
 
-  <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzC3Rs2jEwzoqc2RtlA7v2dRMynb08q47l9UvZWdUvKAi_DOZNsyPiz5eDr3voQJoZP/exec"; // Replace with your Apps Script deployment URL
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbygdCjAxlNG_SWJ3r2Vv4UvzxyKbt7dLJelgWsa9s5Iq0qEr7J4mBrnW3ztTMhsTRqq/exec"; // Replace with Apps Script Web App URL
 
-    const btn = document.getElementById("cloneBtn");
-    const statusEl = document.getElementById("status");
+const btn = document.getElementById("cloneBtn");
+const statusEl = document.getElementById("status");
 
-    btn.onclick = async () => {
-      const email = document.getElementById("email").value.trim();
-      if (!email) {
-        statusEl.innerText = "Please enter a valid email.";
-        return;
-      }
+btn.onclick = async () => {
+  const email = document.getElementById("email").value.trim();
+  if (!email) { statusEl.innerText="Please enter a valid email."; return; }
+  statusEl.innerText="Processing, please wait...";
+  btn.disabled=true;
 
-      statusEl.innerText = "Processing, please wait...";
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(`${WEB_APP_URL}?action=clone&email=${encodeURIComponent(email)}`, {
-          credentials: "include"
-        });
-        const data = await res.json();
-
-        if (data.sheetId) {
-          const link = `https://docs.google.com/spreadsheets/d/${data.sheetId}/edit`;
-          statusEl.innerHTML = `✅ Your sheet is ready: <a href="${link}" target="_blank">Open Sheet</a>`;
-        } else {
-          statusEl.innerText = data.message || "Error cloning sheet.";
-        }
-      } catch (err) {
-        console.error(err);
-        statusEl.innerText = "Error: " + err;
-      } finally {
-        btn.disabled = false;
-      }
-    };
-  </script>
+  try {
+    const res = await fetch(`${WEB_APP_URL}?action=clone&email=${encodeURIComponent(email)}`, { credentials:"include" });
+    const data = await res.json();
+    if (data.sheetId) {
+      const link = `https://docs.google.com/spreadsheets/d/${data.sheetId}/edit`;
+      statusEl.innerHTML=`✅ Your sheet is ready: <a href="${link}" target="_blank">Open Sheet</a>`;
+    } else {
+      statusEl.innerText = data.message || "Error cloning sheet.";
+    }
+  } catch (err) {
+    console.error(err);
+    statusEl.innerText = "Error: " + err;
+  } finally { btn.disabled=false; }
+};
+</script>
 </body>
 </html>
